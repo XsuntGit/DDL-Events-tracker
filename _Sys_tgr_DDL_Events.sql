@@ -26,7 +26,7 @@ AS
 
 		BEGIN TRY
 			DECLARE @eventdata XML = EVENTDATA();
-			INSERT INTO [dbo].[Sys_DDL_Events]
+			INSERT INTO [XsuntAdmin].[dbo].[Sys_DDL_Events]
 			(
 				[PostTime],
 				[transaction_id],

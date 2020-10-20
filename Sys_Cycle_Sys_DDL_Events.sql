@@ -23,6 +23,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Sys_Cycle_Sys_DDL_Events',
 		@category_name=N'[Uncategorized (Local)]',
 		@owner_login_name=N'sa', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+/****** Object:  Step [Cycle_Sys_DDL_Events]    Script Date: 10/19/2020 9:48:55 PM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Cycle_Sys_DDL_Events',
 		@step_id=1,
 		@cmdexec_success_code=0,
@@ -33,11 +34,12 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Cycle_Sy
 		@retry_attempts=0,
 		@retry_interval=0,
 		@os_run_priority=0, @subsystem=N'TSQL',
-		@command=N'exec [dbo].[Cycle_Sys_DDL_Events];
+		@command=N'exec [XsuntAdmin].[dbo].[Cycle_Sys_DDL_Events];
 GO',
-		@database_name=N'master',
+		@database_name=N'XsuntAdmin',
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+/****** Object:  Step [Drop Extra Sys_DDL_Events tables]    Script Date: 10/19/2020 9:48:55 PM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Extra Sys_DDL_Events tables',
 		@step_id=2,
 		@cmdexec_success_code=0,
@@ -49,21 +51,13 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Ext
 		@retry_interval=0,
 		@os_run_priority=0, @subsystem=N'TSQL',
 		@command=N'DECLARE @CMD NVARCHAR(500)
-
 DECLARE drop_sys_ddl_events CURSOR LOCAL FAST_FORWARD READ_ONLY FOR
 SELECT ''DROP TABLE IF EXISTS '' + QUOTENAME(sh.[name]) + ''.'' + QUOTENAME(s.[name]) as CMD
-FROM sys.objects s,
-sys.schemas sh
+FROM [XsuntAdmin].[sys].[objects] s,
+[XsuntAdmin].[sys].[schemas] sh
 WHERE sh.schema_id = s.schema_id
-AND s.[name] NOT IN
-(
-	SELECT TOP 60 [name]
-	FROM sys.objects
-	WHERE [name] LIKE ''Sys_DDL_Events%''
-	ORDER BY [create_date] DESC
-)
 AND s.[name] LIKE ''Sys_DDL_Events%''
-
+AND s.[create_date] < GETDATE()-60
 OPEN drop_sys_ddl_events
 FETCH NEXT FROM drop_sys_ddl_events INTO @CMD
 WHILE @@FETCH_STATUS = 0
@@ -71,11 +65,10 @@ BEGIN
 	EXECUTE(@CMD)
 	FETCH NEXT FROM drop_sys_ddl_events INTO @CMD
 END
-
 CLOSE drop_sys_ddl_events
 DEALLOCATE drop_sys_ddl_events
 ',
-		@database_name=N'master',
+		@database_name=N'XsuntAdmin',
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
