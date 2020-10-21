@@ -2,9 +2,9 @@ USE [master]
 GO
 CREATE DATABASE [XsuntAdmin] CONTAINMENT = NONE
  ON  PRIMARY
-( NAME = N'XsuntAdmin', FILENAME = N'E:\SQLServer\Databases\XsuntAdmin.mdf' , SIZE = 10000KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'XsuntAdmin', FILENAME = N'E:\SQLServer\Databases\XsuntAdmin.mdf' , SIZE = 100000KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON
-( NAME = N'XsuntAdmin_log', FILENAME = N'D:\SQLServer\Logs\XsuntAdmin_log.ldf' , SIZE = 10000KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'XsuntAdmin_log', FILENAME = N'D:\SQLServer\Logs\XsuntAdmin_log.ldf' , SIZE = 100000KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 ALTER DATABASE [XsuntAdmin] SET ANSI_NULL_DEFAULT OFF
 GO

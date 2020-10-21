@@ -1,6 +1,10 @@
 USE [msdb]
 GO
 
+EXEC msdb.dbo.sp_delete_job @job_name=N'Sys_Cycle_Sys_DDL_Events', @delete_unused_schedule=1
+GO
+
+
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
